@@ -1,0 +1,95 @@
+﻿@model Project.Models.Product
+
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    
+}
+
+<!-- Shop Detail Start -->
+<div class="container-fluid py-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-5 pb-5">
+            <img src="@Html.DisplayFor(model => model.img_name)" height="600" width="400">
+        </div>
+
+        <div class="col-lg-7 pb-5">
+            <h3 class="font-weight-semi-bold">@Model.PName</h3>
+            <div class="d-flex mb-3">
+                <div class="text-primary mr-2">
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star-half-alt"></small>
+                    <small class="far fa-star"></small>
+                </div>
+                <small class="pt-1">(50 Reviews)</small>
+            </div>
+            <h3 class="font-weight-semi-bold mb-4">₹@Model.Price</h3>
+            <!-- Add price here -->
+            <h5>Product Description:</h5>
+            <p class="mb-4">@Model.Description</p>
+            <h5>Color: @Model.Color</h5>
+            <div class="d-flex align-items-center mb-4 pt-2">
+                <!-- Your size and color selectors if applicable -->
+            </div>
+            <div class="d-flex pt-2">
+                <form action="@Url.Action("Cart", "Cart", new { PId = Model.PId })" method="post">
+                    <input type="hidden" name="productId" value="@Model.PId" />
+                    <button type="submit" class="btn btn-primary px-3">
+                        <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                    </button>
+                </form>
+            </div>
+            <div class="d-flex pt-2">
+                <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p>
+                <div class="d-inline-flex">
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-pinterest"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-xl-5">
+        <!-- Add your tabbed content for additional information, reviews, etc. -->
+    </div>
+
+    <!-- Products Start -->
+    <div class="container-fluid py-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">You May Also Like</span></h2>
+        </div>
+        <div class="row px-xl-5">
+            @foreach (var product in ViewBag.RandomProducts)
+            {
+                <div class="col">
+                    <a asp-action="Details" asp-route-id="@product.PId" asp-controller="Products" class="card product-item border-0 text-decoration-none">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <img src="@product.img_name" alt="Product Image" class="img-fluid" style="width: 100%; height: auto;" />
+                        </div>
+
+                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <h6 class="text-truncate mb-3">@product.PName</h6>
+                            <div class="d-flex justify-content-center">
+                                <h6>₹@product.Price</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    <!-- Products End-->
+</div>
+<!-- Shop Detail End -->

@@ -1,0 +1,204 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<Project.Models.OrderItem>
+<head>
+    <style>
+        p::before,
+        p::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 75px); /* Adjust the width as needed */
+            height: 2px;
+            background-color: transparent;
+            border-top: 2px dotted #000; /* Adjust the color as needed */
+            z-index: 0;
+        }
+
+        p::before {
+            left: 0;
+            margin-left: -100%;
+        }
+
+        p::after {
+            right: 0;
+            margin-right: -100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .status-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .highlight {
+            background-color: yellow; /* Change to any color you prefer */
+        }
+
+        .status-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connector {
+            flex: 1;
+            height: 2px;
+            background-color: #ccc;
+        }
+
+        .status-circle p {
+            margin-top: 50px; /* Adjust margin-top to position the text vertically */
+            font-size: 14px;
+            color: black;
+            font-weight: bold;
+            position: absolute; /* Position the text absolutely within the circle */
+            top: 50%; /* Align the text vertically at the center of the circle */
+            left: 50%; /* Align the text horizontally at the center of the circle */
+            transform: translate(-50%, -50%); /* Center the text precisely */
+        }
+
+        .status-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black; /* Adjust color as needed */
+        }
+
+        .message {
+            display: none;
+            text-align: center;
+            margin-top: 95px;
+            font-size: 18px;
+            font-weight: bold;
+            color: green; /* Adjust the color as needed */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <p style="font-size: 24px; font-weight: bold; position: relative; display: inline-block;">
+            <span style="position: relative; z-index: 1; background-color: #fff; padding: 0 10px;">Your Order is placed</span>
+        </p>
+    </div>
+    <div class="order-items">
+        <h3>Order Items</h3>
+
+        <ul style="list-style: none; padding: 0;">
+            @foreach (var item in Model)
+            {
+                <li style="margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; padding: 10px;">
+                    <a href="@Url.Action("Details", "Products", new { id = item.ProductId })" style="text-decoration: none; color: inherit;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@item.img_name" alt="@item.ProductName" style="width: 100px; height: 100px; margin-right: 20px; border-radius: 5px;">
+                            <div>
+                                <div style="font-weight: bold;">@item.ProductName</div>
+                                <div>Quantity: @item.Quantity</div>
+                                <div>Total price: ₹@(item.Quantity * item.Price)</div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            }
+        </ul>
+
+    </div>
+    @{
+        var total = (from data in Model select data.Price * data.Quantity).Sum();
+    }
+    <div style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; display: flex; align-items: center;">
+        <h3 style="margin-right: 10px; font-size: 20px;">Total Paid Amount:</h3>
+        <div style="font-size: 20px; font-weight: bold;">₹@total</div>
+    </div>
+    <div class="container">
+        <h1>Order Tracking</h1>
+        <div class="status-section">
+            <div class="status-circle" id="status1">
+                <span class="status-number">1</span>
+                <p>Order Placed</p>
+            </div>
+            <div class="connector"></div>
+            <div class="status-circle" id="status2">
+                <span class="status-number">2</span>
+                <p>Package Shipped</p>
+            </div>
+            <div class="connector"></div>
+            <div class="status-circle" id="status3">
+                <span class="status-number">3</span>
+                <p>Out for Delivery</p>
+            </div>
+            <div class="connector"></div>
+            <div class="status-circle" id="status4">
+                <span class="status-number">4</span>
+                <p>Order Delivered</p>
+            </div>
+        </div>
+        <div class="message" id="deliveryMessage" style="display: none;">
+            Your order has been delivered!
+        </div>
+    </div>
+
+    <script>
+        let currentStatus = 1; // Initial status
+        const statusCircles = document.querySelectorAll('.status-circle');
+        const deliveryMessage = document.getElementById('deliveryMessage');
+
+        function updateStatus() {
+            // Remove highlight from all status circles
+            statusCircles.forEach(circle => {
+                circle.classList.remove('highlight');
+            });
+
+            // Highlight current status circle
+            const currentStatusCircle = document.getElementById('status' + currentStatus);
+            currentStatusCircle.classList.add('highlight');
+
+            // If currentStatus is 4, show the message
+            if (currentStatus === 4) {
+                deliveryMessage.style.display = 'block';
+            } else {
+                deliveryMessage.style.display = 'none';
+            }
+
+            // Move to the next status (except when currentStatus is already 4)
+            if (currentStatus !== 4) {
+                currentStatus = (currentStatus % 4) + 1;
+            }
+
+            // Save current status in sessionStorage
+            sessionStorage.setItem('currentStatus', currentStatus);
+        }
+
+
+        // Check if current status is saved in sessionStorage
+        const savedStatus = sessionStorage.getItem('currentStatus');
+        if (savedStatus) {
+            currentStatus = parseInt(savedStatus);
+        }
+            // Initial update
+            updateStatus();
+
+
+        // Update status every 10 seconds
+        setInterval(updateStatus, 10000);
+    </script>
+</body>
+

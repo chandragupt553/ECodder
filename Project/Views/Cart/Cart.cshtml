@@ -1,0 +1,77 @@
+﻿@model List<Project.Models.Items>
+
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<!-- Cart Start -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <tr>
+                    <th>Product Image</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Product Quantity</th>
+                    <th>Product Total Amount</th>
+                    <th>Operation</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.Product.img_name" alt="@item.Product.PName" width="100" height="100"></img>
+                        </td>
+                        <td>@item.Product.PName</td>
+                        <td>₹@item.Product.Price</td>
+                        <td>
+                            <form asp-action="UpdateQuantity" asp-controller="Cart" class="form-inline">
+                                <input type="hidden" name="PId" value="@item.Product.PId" />
+                                <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control mr-1" style="width: 80px;" />
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+
+                        </td>
+                        <td>₹@(item.Product.Price * item.Quantity)</td>
+                        <td>
+                            <a href="@Url.Action("RemoveFromCart", "Cart", new { PId = item.Product.PId })" class="btn btn-danger">Remove</a>
+                        </td>
+                    </tr>
+                }
+                       
+            </table>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-secondary mb-5">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                </div>
+                @{
+                    var total = (from data in Model select data.Product.Price * data.Quantity).Sum();
+                }
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-medium">Subtotal</h6>
+                        <h6 class="font-weight-medium">₹@total</h6>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Shipping</h6>
+                        <h6 class="font-weight-medium">₹10</h6>
+                    </div>
+                </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Total</h5>
+                        <h5 class="font-weight-bold">₹@(total+10)</h5>
+                    </div>
+                    <a href="@Url.Action("Checkout", "Cart")" class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart End -->

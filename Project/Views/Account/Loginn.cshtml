@@ -1,0 +1,70 @@
+﻿@model Project.Models.Loginn
+
+@{
+    ViewData["Title"] = "Loginn";
+}
+
+<div class="container">
+    <div class="row mt-lg-5">
+        <div class="col-4 offset-4 border border-primary rounded pl-5 pr-5 pb-5">
+            <div class="text-center">
+                <h1 class="text-info">User Login Form</h1>
+            </div>
+            <form id="loginForm" method="post" asp-controller="Account" asp-action="Loginn">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div> <!-- Display model-level errors -->
+                <div class="form-group">
+                    <label asp-for="UEmail">Email-Id</label>
+                    <input type="text" asp-for="UEmail" placeholder="Enter your EmailId" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="UEmail" class="text-danger"></span> <!-- Display field-level errors -->
+                </div>
+                <div class="form-group">
+                    <label asp-for="UPassword">Password</label>
+                    <div class="input-group">
+                        <input id="password" type="password" asp-for="UPassword" placeholder="Enter your Password" class="form-control" autocomplete="off" />
+                    </div>
+                    <span asp-validation-for="UPassword" class="text-danger"></span> <!-- Display field-level errors -->
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" asp-for="IsRemember" />
+                    <label asp-for="IsRemember">Remember Me</label>
+                </div>
+                <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" /> <!-- Hidden field for returnUrl -->
+                <div class="form-group">
+                    <input type="submit" id="loginButton" class="btn btn-block btn-primary mb-2" value="Log In" />
+                </div>
+                <style>
+                    .btn-link {
+                        color: #007bff;
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+
+                        .btn-link:hover {
+                            color: #0056b3;
+                            text-decoration: underline;
+                        }
+                </style>
+                <div class="form-group text-center">
+                    <a href="@Url.Action("SignUp", "Account")" class="btn-link">Are you a new customer?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is loaded -->
+    <script>
+        $('#togglePassword').click(function () {
+            var passwordField = $('#password');
+            var fieldType = passwordField.attr('type');
+            if (fieldType === 'password') {
+                passwordField.attr('type', 'text');
+                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+        });
+    </script>
+}
